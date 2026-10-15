@@ -121,9 +121,58 @@ if (VERIFICAR) {
 }
 
 db.atualizado = new Date().toISOString();
-writeFileSync(DADOS, JSON.stringify(db, null, 1));
+// ---- datas, meta semanal e pré-renderização (o painel mostra tudo mesmo sem JavaScript) ----
+const META = 50;
+const dateOf = (id) => (String(id).match(/^\d{4}-\d{2}-\d{2}/) || [""])[0];
+for (const l of db.leads) if (!l.data) l.data = dateOf(l.ronda) || (db.rondas.find((r) => r.id === l.ronda)?.data || "").slice(0, 10);
+const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const now = new Date();
+const TODAY = ymd(now);
+const mon = new Date(now); mon.setHours(12); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+const MON = ymd(mon);
+const ddmm = (s) => (s ? `${s.slice(8, 10)}/${s.slice(5, 7)}` : "—");
+const dow = (s) => ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"][new Date(s + "T12:00:00").getDay()];
+
+const exclFile = path.join(here, "dados", "exclusoes-base.txt");
+const exclusoes = existsSync(exclFile) ? readFileSync(exclFile, "utf8").replace(/\([^)]*\)/g, "").split(/[;\n]/).map((x) => x.trim()).filter(Boolean) : [];
+const json = JSON.stringify({ leads: db.leads, rondas: db.rondas, atualizado: db.atualizado, exclusoes, meta: META }).replace(/</g, "\\u003c");
+
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const named = (l) => !!(l.nome && l.nome.trim() && !/^a identificar/i.test(l.nome));
+const score = (l) => (named(l) ? 2 : 0) + (l.email ? 1 : 0) + (l.telefone ? 1 : 0);
+const conf = (l) => l.verificacao?.estado === "confirmado";
+const prio = (l) => score(l) * 10 + (conf(l) ? 5 : 0);
+const inWeek = (l) => !!l.data && l.data >= MON && l.data <= TODAY;
+const nL = db.leads.length, nNamed = db.leads.filter(named).length, nConf = db.leads.filter(conf).length, nRan = db.leads.filter((l) => l.verificacao).length;
+const wk = db.leads.filter(inWeek).length;
+const kp = (v, t) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(t)}</span></div>`;
+const kpis = kp(nL, "leads na base") + kp(db.leads.filter((l) => l.data === TODAY).length, "novos hoje") + kp(nL ? Math.round((nNamed / nL) * 100) + "%" : "0%", "com nome de decisor") + kp(nRan ? `${nConf} de ${nRan}` : "—", "confirmados na fonte");
+
+const days = {};
+for (const l of db.leads) if (l.data && l.data >= MON) days[l.data] = (days[l.data] || 0) + 1;
+const falta = Math.max(0, META - wk);
+const metaHtml = `<div class="top"><span class="big">${wk} <small>de ${META} leads esta semana</small></span><span style="color:var(--muted)">${falta ? "faltam " + falta : "meta cumprida ✔"}</span></div><div class="prog"><i style="width:${Math.min(100, Math.round((wk / META) * 100))}%"></i></div><div class="days">${Object.keys(days).sort().reverse().map((d) => `<span class="day"><b>+${days[d]}</b> ${dow(d)} ${ddmm(d)}${d === TODAY ? " (hoje)" : ""}</span>`).join("") || '<span style="color:var(--muted);font-size:13px">Ainda não entrou nenhum lead esta semana.</span>'}</div>`;
+
+const q = (l) => (score(l) >= 4 ? ["Alta", "alta"] : score(l) >= 2 ? ["Média", "media"] : ["Baixa", "baixa"]);
+const rowsHtml = [...db.leads].sort((a, b) => prio(b) - prio(a) || a.empresa.localeCompare(b.empresa, "pt")).map((l) => {
+  const [ql, qc] = q(l);
+  const v = !l.verificacao ? "não verificado" : l.verificacao.estado === "confirmado" ? "✔ confirmado na fonte" : l.verificacao.estado === "sem_acesso" ? "fonte inacessível" : "✖ não encontrado na fonte";
+  return `<tr><td><b>${ddmm(l.data)}</b></td><td><b>${esc(l.empresa)}</b><small>${esc(l.cidade)} · ${esc(l.segmento)}</small></td><td>${named(l) ? esc(l.nome) : "A identificar"}<small>${esc(l.cargo)}</small></td><td>${esc(l.telefone) || "—"}</td><td>${esc(l.email) || "—"}</td><td><span class="pill ${qc}">${ql}</span></td><td>${v}</td></tr>`;
+}).join("");
+const tableHtml = `<table><thead><tr><th>Data</th><th>Empresa</th><th>Contacto</th><th>Telefone</th><th>Email</th><th>Qualidade</th><th>Verificação</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
+
+// pedidos por segmento (versão estática; o JavaScript volta a gerá-los com as opções escolhidas)
+const names = [...new Set([...db.leads.map((l) => l.empresa), ...exclusoes].filter(Boolean))];
+const brief = (seg, n) => `Pesquisa na web e encontra ${n} leads B2B NOVOS do segmento "${seg}" em Portugal para a Neroes (treino mental com EEG para clubes e atletas, escolas, ginásios, clínicas e empresas).\n\nREGRAS:\n- Só dados escritos num site oficial da própria entidade (contactos, direção, órgãos sociais, relatório e contas). Nunca inventes nem deduzas emails, telefones ou nomes. Campo desconhecido = "".\n- PRIORIDADE ao nome e cargo de um responsável de decisão publicado no site; pelo menos 7 em cada 10 com nome. Sem nome, usa o contacto institucional e deixa o nome vazio.\n- Escolhe páginas em que o email/telefone aparece no HTML estático: um verificador vai reabrir a página da fonte e procurar o contacto.\n- Não uses LinkedIn nem adivinhes emails no formato nome.apelido@. Cada lead com email OU telefone. Diversifica por cidades e regiões.\n- NÃO repitas nenhuma destas entidades (já na base, ${names.length}): ${names.join("; ")}.\n\nFORMATO: responde APENAS com um array JSON válido (sem texto antes ou depois, sem blocos de código): [{"nome":"","cargo":"","empresa":"","segmento":"${seg}","telefone":"","email":"","cidade":"","fonte":"URL1 ; URL2"}]. Se não encontrares ${n} verificados, devolve menos. Não inventes.`;
+const briefsHtml = ["Desporto", "Educação Privada", "Fitness", "Corporate", "Clínicas e Saúde"].map((s, i) => `<div class="panel"><b>Pedido ${i + 1} · ${s} · 10 leads</b><pre class="brief" tabindex="0">${esc(brief(s, 10))}</pre></div>`).join("");
+
+const upd = `Atualizado em ${now.toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })}`;
 const tpl = readFileSync(path.join(here, "template.html"), "utf8");
 const logo = readFileSync(path.join(here, "assets", "logo.png")).toString("base64");
-const json = JSON.stringify({ leads: db.leads, rondas: db.rondas, atualizado: db.atualizado }).replace(/</g, "\\u003c");
-writeFileSync(path.join(here, "painel-leads.html"), tpl.replace("__LOGO__", () => "data:image/png;base64," + logo).replace("/*__DATA__*/null", () => json));
-console.log(`Painel atualizado: ${db.leads.length} leads → painel-leads.html`);
+writeFileSync(
+  path.join(here, "painel-leads.html"),
+  tpl.replace("__LOGO__", () => "data:image/png;base64," + logo).replace("/*__DATA__*/null", () => json).replace("__UPD__", () => upd).replace("__META__", () => metaHtml).replace("__KPIS__", () => kpis).replace("__TABLE__", () => tableHtml).replace("__BRIEFS__", () => briefsHtml),
+);
+db.atualizado = now.toISOString();
+writeFileSync(DADOS, JSON.stringify(db, null, 1));
+console.log(`Painel atualizado: ${db.leads.length} leads (${wk} esta semana, meta ${META}) → painel-leads.html`);

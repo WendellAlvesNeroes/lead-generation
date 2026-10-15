@@ -12,26 +12,33 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 var(--font);padding:0 20px 48px;font-variant-numeric:tabular-nums}
 .wrap{max-width:1280px;margin:0 auto}
-header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:20px 0 12px;border-bottom:1px solid var(--line);margin-bottom:16px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:20px 0 12px;border-bottom:1px solid var(--line);margin-bottom:12px}
 header img{height:38px;display:block}
 h1{margin:0;font-size:22px;letter-spacing:.02em;text-transform:uppercase}h1 span{color:var(--brand)}
 .upd{margin-left:auto;color:var(--muted);font-size:13px;text-align:right}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 14px}
+nav.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;color:var(--muted);font:500 15px var(--font)}
+nav.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--brand)}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:500;margin:16px 0 6px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
 .kpi{background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
 .kpi b{display:block;font-size:30px;line-height:1.1}.kpi span{color:var(--muted);font-size:13px}
+.meta{background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.meta .top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}.meta .big{font-size:34px;font-weight:700;line-height:1}.meta .big small{font-size:18px;color:var(--muted);font-weight:500}
+.prog{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin:10px 0}.prog i{display:block;height:100%;background:var(--ok)}
+.days{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.day{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.day b{color:var(--ok);font-size:17px}.day[aria-pressed=true]{border-color:var(--brand)}
 .bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line);gap:2px;margin:2px 0 6px}.bar i{display:block;height:100%}
-.legend{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--muted);font-size:13px;margin-bottom:14px}.legend em{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
-h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:500;margin:16px 0 6px}
-.rondas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
-.ronda{background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13.5px}.ronda b{color:var(--ok);font-size:16px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--muted);font-size:13px;margin-bottom:10px}.legend em{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 10px}
 input[type=search]{flex:1 1 240px;min-width:0;background:var(--tint);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:inherit;font:inherit;min-height:38px}
 .chip,.btn{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer;min-height:34px}
 .chip[aria-pressed=true]{background:var(--ink);color:#0A0A0A;border-color:var(--ink)}
-.btn{border-radius:6px}.btn:hover,.chip:hover{border-color:var(--brand)}
+.btn{border-radius:6px}.btn:hover,.chip:hover{border-color:var(--brand)}.main{background:var(--ink);color:#0A0A0A;border:0;font-weight:500}.big-btn{font-size:16px;padding:9px 18px;min-height:42px}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
-table{border-collapse:collapse;width:100%;min-width:1000px;font-size:14px}
+table{border-collapse:collapse;width:100%;min-width:1060px;font-size:14px}
 th,td{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
 th{background:var(--tint);color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 th button{all:unset;cursor:pointer}tr:last-child td{border-bottom:0}tbody tr:hover{background:var(--tint)}
@@ -44,6 +51,16 @@ td b{font-weight:700}td small{display:block;color:var(--muted);font-size:12.5px}
 a{color:var(--brand)}.new td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
 .empty{padding:36px;text-align:center;color:var(--muted)}
 .foot{color:var(--muted);font-size:12.5px;margin-top:14px;max-width:90ch}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}@media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}.field label{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.field input,.field textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:inherit;font:inherit;min-height:38px;width:100%}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px}.checks label{display:flex;gap:6px;align-items:center;font-size:15px}
+pre.brief{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px;font:13px/1.4 var(--font);max-height:170px;overflow:auto;margin:8px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:12px}.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:10px}
+.steps li:before{content:counter(s);width:28px;height:28px;border-radius:50%;border:1px solid var(--brand);color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:14px}
+.note{background:var(--warn-s);border-left:3px solid var(--warn);padding:8px 12px;border-radius:0 6px 6px 0;font-size:14px;margin:10px 0}
+.dup{color:var(--bad)}.nw{color:var(--ok)}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#0A0A0A;padding:8px 16px;border-radius:6px;font-size:14px}
 </style>
 </head>
@@ -52,22 +69,82 @@ a{color:var(--brand)}.new td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
 <header>
   <img src="__LOGO__" alt="Neroes">
   <h1>Busca de <span>Leads</span></h1>
-  <div class="upd" id="upd"></div>
+  <div class="upd" id="upd">__UPD__</div>
 </header>
+<nav class="tabs" role="tablist" aria-label="Secções">
+  <button role="tab" id="t-leads" aria-selected="true" data-tab="leads">Leads</button>
+  <button role="tab" id="t-find" aria-selected="false" data-tab="find">Buscar novos leads</button>
+  <button role="tab" id="t-how" aria-selected="false" data-tab="how">Como funciona</button>
+</nav>
 <main>
-  <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+
+<section id="tab-leads">
+  <section class="meta" id="meta" aria-label="Meta da semana">__META__</section>
+  <section class="kpis" id="kpis" aria-label="Indicadores">__KPIS__</section>
   <div id="dist"></div>
-  <h2>Rondas de pesquisa</h2>
-  <div class="rondas" id="rondas"></div>
   <div class="tools" role="search">
     <label for="q" style="position:absolute;left:-9999px">Pesquisar</label>
     <input type="search" id="q" placeholder="Pesquisar empresa, pessoa, cidade, email…">
-    <span id="chips" role="group" aria-label="Segmento" style="display:flex;flex-wrap:wrap;gap:6px"></span>
     <button class="btn" id="csv" type="button">Exportar CSV</button>
     <span style="color:var(--muted);font-size:13px" id="count" role="status"></span>
   </div>
-  <div class="tw" id="tw"></div>
+  <div id="chips" role="group" aria-label="Filtros" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
+  <div class="tw" id="tw">__TABLE__</div>
   <p class="foot">Dados lidos em sites oficiais das entidades. “Confirmado na fonte” significa que o email ou telefone voltou a aparecer na página de origem quando foi verificado. Contactos institucionais não são o contacto direto do decisor. Contactos com nome de pessoa só devem ser usados com base legal (RGPD).</p>
+</section>
+
+<section id="tab-find" aria-labelledby="t-find">
+  <h2 style="margin-top:0">Busca semanal: 50 leads por semana</h2>
+  <p style="color:var(--muted);margin:0 0 10px;max-width:90ch">Cada pedido é para um segmento (10 leads). Copie um pedido, cole-o no Claude (claude.ai ou Claude Code, com pesquisa na web, plano normal: <b>sem créditos de API</b>), e cole aqui o JSON que ele devolver. O painel regista a <b>data</b> e só aceita leads novos.</p>
+  <div class="grid2">
+    <div>
+      <h2 style="margin-top:0">1. Pedidos de pesquisa</h2>
+      <div class="panel">
+        <div class="field"><label>Segmentos</label><div class="checks" id="f-segs"></div></div>
+        <div class="grid2" style="gap:10px"><div class="field"><label for="n">Leads no total</label><input id="n" type="number" min="5" max="100" value="50"></div><div class="field"><label for="reg">Região</label><input id="reg" value="Portugal"></div></div>
+        <button class="btn main big-btn" id="b-gen" type="button">Gerar pedidos</button>
+        <span id="binfo" style="color:var(--muted);font-size:13px;margin-left:8px"></span>
+      </div>
+      <div id="briefs">__BRIEFS__</div>
+    </div>
+    <div>
+      <h2 style="margin-top:0">2. Colar o resultado</h2>
+      <div class="field"><label for="paste">Resultado do Claude (JSON ou linhas com TAB)</label><textarea id="paste" rows="7" placeholder='[{"nome":"","cargo":"","empresa":"","segmento":"","telefone":"","email":"","cidade":"","fonte":""}]'></textarea></div>
+      <div id="preview"></div>
+      <div class="note">Os leads adicionados aqui ficam guardados <b>neste navegador</b>. Para ficarem no painel de todos: “Guardar ficheiro” → pôr na pasta <code>entrada</code> → executar <code>atualizar-painel.bat</code> (junta e confirma cada contacto na página de origem).</div>
+      <h2>Adicionados hoje neste navegador</h2><div id="recent" style="color:var(--muted)"></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-how" aria-labelledby="t-how">
+  <div class="grid2">
+    <div>
+      <h2 style="margin-top:0">O que é</h2>
+      <p>Painel de uma página com os leads que a Neroes encontra em sites oficiais de clubes, escolas, ginásios, clínicas e empresas. Mostra quem são, como contactar, de onde vem cada dado, <b>em que dia entraram</b> e se o contacto voltou a aparecer na página de origem.</p>
+      <h2>Rotina semanal (meta: 50 leads)</h2>
+      <ol class="steps">
+        <li><div><b>Gerar os pedidos</b><br><span style="color:var(--muted)">“Buscar novos leads”: um pedido por segmento, já com todas as entidades a excluir.</span></div></li>
+        <li><div><b>Usar no Claude</b><br><span style="color:var(--muted)">Cole cada pedido no Claude (com pesquisa na web). Ele devolve os leads em JSON.</span></div></li>
+        <li><div><b>Colar o resultado</b><br><span style="color:var(--muted)">O painel mostra o que é novo e o que é repetido e regista a data.</span></div></li>
+        <li><div><b>Guardar para todos</b><br><span style="color:var(--muted)">“Guardar ficheiro” → pasta <code>entrada</code> → <code>atualizar-painel.bat</code>.</span></div></li>
+        <li><div><b>Contactar</b><br><span style="color:var(--muted)">Filtre por “Com nome” e “Confirmados”, e registe o resultado na folha da equipa.</span></div></li>
+      </ol>
+    </div>
+    <div>
+      <h2 style="margin-top:0">Como ler o painel</h2>
+      <p><span class="pill alta">Alta</span> nome, email e telefone &nbsp; <span class="pill media">Média</span> faltam dados &nbsp; <span class="pill baixa">Baixa</span> pouco contacto. A ordem por defeito é a prioridade: qualidade mais confirmação na fonte.</p>
+      <p><b class="v-c">✔ confirmado na fonte</b>: o email ou telefone apareceu na página de origem. <b class="v-n">✖ não encontrado</b>: rever à mão. <b class="v-x">fonte inacessível</b>: o verificador não conseguiu abrir a página.</p>
+      <h2>Limites</h2>
+      <ul>
+        <li>A maioria dos contactos é institucional; o contacto direto do decisor exige LinkedIn ou uma ferramenta paga.</li>
+        <li>O painel só mostra. Estado, responsável e notas ficam na folha da equipa por agora.</li>
+        <li>Não envia e-mails. Contactos com nome de pessoa só com base legal (RGPD).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 </main>
 </div>
 <div id="toast" hidden></div>
@@ -75,75 +152,184 @@ a{color:var(--brand)}.new td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
 (function(){
 "use strict";
 var DATA=/*__DATA__*/null;
+var META=DATA.meta||50;
 var SEGCOL={"Desporto":"#00A5E9","Educação Privada":"#8D99AE","Fitness":"#2EC4A0","Corporate":"#E0A14B","Clínicas e Saúde":"#B07CC6"};
-var S={q:"",seg:"",k:"qual",dir:-1};
+var ALLSEG=["Desporto","Educação Privada","Fitness","Corporate","Clínicas e Saúde"];
+var S={q:"",seg:"",dia:"",k:"qual",dir:-1,nm:false,ok:false,tel:false};
 var $=function(s){return document.querySelector(s)};
 function h(t,p){var e=document.createElement(t);if(p)Object.keys(p).forEach(function(k){var v=p[k];if(k==="class")e.className=v;else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,"");else if(v!==false&&v!=null)e.setAttribute(k,v)});for(var i=2;i<arguments.length;i++)[].concat(arguments[i]).forEach(function(c){if(c==null||c===false)return;e.append(c&&c.nodeType?c:document.createTextNode(String(c)))});return e}
-function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},2500)}
-function copy(txt){try{navigator.clipboard.writeText(txt).then(function(){toast("Copiado")},function(){fb()})}catch(e){fb()}function fb(){var a=h("textarea",{style:"position:fixed;opacity:0"});a.value=txt;document.body.append(a);a.select();try{document.execCommand("copy");toast("Copiado")}catch(e){toast("Selecione e copie manualmente")}a.remove()}}
-function norm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},2600)}
+function copy(txt){function fb(){var a=h("textarea",{style:"position:fixed;opacity:0"});a.value=txt;document.body.append(a);a.select();try{document.execCommand("copy");toast("Copiado")}catch(e){toast("Selecione e copie manualmente")}a.remove()}try{navigator.clipboard.writeText(txt).then(function(){toast("Copiado")},fb)}catch(e){fb()}}
+function nrm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"")}
+function dg(s){var d=String(s||"").replace(/\D+/g,"");return d.length>=9?d.slice(-9):""}
+function fold(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
 function named(l){return !!(l.nome&&l.nome.trim()&&!/^a identificar/i.test(l.nome))}
 function score(l){return (named(l)?2:0)+(l.email?1:0)+(l.telefone?1:0)}
 function qual(l){var s=score(l);return s>=4?"Alta":s>=2?"Média":"Baixa"}
 function qc(q){return q==="Alta"?"alta":q==="Média"?"media":"baixa"}
-var L=DATA.leads;
-var lastRonda=DATA.rondas.length?DATA.rondas[DATA.rondas.length-1].id:"";
-var SEGS=[];L.forEach(function(l){if(l.segmento&&SEGS.indexOf(l.segmento)<0)SEGS.push(l.segmento)});
+function confirmed(l){return !!(l.verificacao&&l.verificacao.estado==="confirmado")}
+function prio(l){return score(l)*10+(confirmed(l)?5:0)}
+
+/* ---- datas ---- */
+function ymd(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+var TODAY=ymd(new Date());
+function monday(){var d=new Date();d.setHours(12);var w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return ymd(d)}
+var MON=monday();
+function inWeek(l){return !!l.data&&l.data>=MON&&l.data<=TODAY}
+function ddmm(s){return s?s.slice(8,10)+"/"+s.slice(5,7):"—"}
+function dowName(s){var d=new Date(s+"T12:00:00");return ["dom","seg","ter","qua","qui","sex","sáb"][d.getDay()]}
+
+var L=DATA.leads,SEGS=[];
+var LS="neroes-leads-local";
+function loadLocal(){try{return JSON.parse(localStorage.getItem(LS)||"[]")}catch(e){return []}}
+function saveLocal(a){try{localStorage.setItem(LS,JSON.stringify(a));return true}catch(e){return false}}
+var LOCAL=loadLocal();
+
+/* ---- meta semanal + dias ---- */
+function renderMeta(){
+  var wk=L.filter(inWeek).length,pct=Math.min(100,Math.round(wk/META*100)),falta=Math.max(0,META-wk);
+  var days={};L.forEach(function(l){if(l.data&&l.data>=MON)days[l.data]=(days[l.data]||0)+1});
+  var keys=Object.keys(days).sort().reverse();
+  var box=$("#meta");
+  box.replaceChildren(
+    h("div",{class:"top"},h("span",{class:"big"},wk," ",h("small",null,"de "+META+" leads esta semana")),h("span",{style:"color:var(--muted)"},falta?"faltam "+falta:"meta cumprida ✔")),
+    h("div",{class:"prog",role:"progressbar","aria-valuenow":wk,"aria-valuemin":0,"aria-valuemax":META},h("i",{style:"width:"+pct+"%"})),
+    h("div",{style:"display:flex;flex-wrap:wrap;gap:8px;align-items:center"},
+      h("button",{class:"btn main big-btn",type:"button",onclick:function(){goFind(falta||META)}},falta?"Pedir os "+falta+" que faltam":"Pedir mais leads"),
+      h("button",{class:"btn",type:"button",onclick:function(){S.dia=S.dia==="semana"?"":"semana";chips();table()}},"Ver só os desta semana"),
+      h("span",{style:"color:var(--muted);font-size:13px"},"Semana desde "+ddmm(MON))),
+    keys.length?h("div",{class:"days"},keys.map(function(d){return h("button",{class:"day",type:"button","aria-pressed":S.dia===d?"true":"false",onclick:function(){S.dia=S.dia===d?"":d;renderMeta();chips();table()}},h("b",null,"+"+days[d])," ",dowName(d)+" "+ddmm(d)+(d===TODAY?" (hoje)":""))})):h("div",{style:"color:var(--muted);font-size:13px"},"Ainda não entrou nenhum lead esta semana.")
+  );
+}
+function goFind(n){$("#t-find").click();$("#n").value=n;$("#b-gen").click()}
 
 function kpis(){
-  var n=L.length,nm=L.filter(named).length,ver=L.filter(function(l){return l.verificacao&&l.verificacao.estado==="confirmado"}).length,ran=L.filter(function(l){return l.verificacao}).length;
-  var nw=L.filter(function(l){return l.ronda===lastRonda}).length;
+  var n=L.length,nm=L.filter(named).length,ver=L.filter(confirmed).length,ran=L.filter(function(l){return l.verificacao}).length;
   function t(v,s){return h("div",{class:"kpi"},h("b",null,v),h("span",null,s))}
-  $("#kpis").replaceChildren(t(n,"leads na base"),t(nw,"da última ronda"),t(n?Math.round(nm/n*100)+"%":"0%","com nome de decisor"),t(ran?ver+" de "+ran:"—","confirmados na fonte"));
+  $("#kpis").replaceChildren(t(n,"leads na base"),t(L.filter(function(l){return l.data===TODAY}).length,"novos hoje"),t(n?Math.round(nm/n*100)+"%":"0%","com nome de decisor"),t(ran?ver+" de "+ran:"—","confirmados na fonte"));
   var bar=h("div",{class:"bar",role:"img","aria-label":"Distribuição por segmento"}),leg=h("div",{class:"legend"});
   SEGS.forEach(function(s){var c=L.filter(function(l){return l.segmento===s}).length;bar.append(h("i",{style:"width:"+c/n*100+"%;background:"+(SEGCOL[s]||"#888")}));leg.append(h("span",null,h("em",{style:"background:"+(SEGCOL[s]||"#888")}),s+" "+c))});
   $("#dist").replaceChildren(bar,leg);
   $("#upd").replaceChildren(h("div",null,"Atualizado em "+new Date(DATA.atualizado).toLocaleString("pt-PT",{dateStyle:"short",timeStyle:"short"})));
-  $("#rondas").replaceChildren.apply($("#rondas"),DATA.rondas.map(function(r){return h("div",{class:"ronda"},h("b",null,"+"+r.novos)," ",r.id.replace(/^\d{4}-/,""),h("small",{style:"color:var(--muted)"},"  ("+r.repetidos+" repetidos ignorados)"))}));
 }
 function chips(){
   var box=$("#chips");box.replaceChildren();
-  [""].concat(SEGS).forEach(function(s){box.append(h("button",{class:"chip",type:"button","aria-pressed":S.seg===s?"true":"false",onclick:function(){S.seg=s;chips();table()}},s||"Todos"))});
+  function c(label,on,fn){box.append(h("button",{class:"chip",type:"button","aria-pressed":on?"true":"false",onclick:fn},label))}
+  c("Todos",!S.seg,function(){S.seg="";chips();table()});
+  SEGS.forEach(function(s){c(s,S.seg===s,function(){S.seg=S.seg===s?"":s;chips();table()})});
+  box.append(h("span",{style:"width:1px;background:var(--line);margin:0 4px"}));
+  c("Hoje",S.dia==="hoje",function(){S.dia=S.dia==="hoje"?"":"hoje";renderMeta();chips();table()});
+  c("Esta semana",S.dia==="semana",function(){S.dia=S.dia==="semana"?"":"semana";renderMeta();chips();table()});
+  box.append(h("span",{style:"width:1px;background:var(--line);margin:0 4px"}));
+  [["nm","Com nome"],["ok","Confirmados"],["tel","Com telefone"]].forEach(function(f){c(f[1],S[f[0]],function(){S[f[0]]=!S[f[0]];chips();table()})});
 }
 function cp(t){return t?h("div",{class:"cp"},h("span",null,t),h("button",{class:"cpb",type:"button","aria-label":"Copiar "+t,onclick:function(){copy(t)}},"copiar")):h("span",{class:"v-x"},"—")}
-function ver(l){
-  var v=l.verificacao;
-  if(!v)return h("span",{class:"v-x"},"não verificado");
-  if(v.estado==="confirmado")return h("span",{class:"v-c"},"✔ confirmado na fonte");
-  if(v.estado==="sem_acesso")return h("span",{class:"v-x"},"fonte inacessível");
-  return h("span",{class:"v-n"},"✖ não encontrado na fonte");
-}
+function ver(l){var v=l.verificacao;if(!v)return h("span",{class:"v-x"},"não verificado");if(v.estado==="confirmado")return h("span",{class:"v-c"},"✔ confirmado na fonte");if(v.estado==="sem_acesso")return h("span",{class:"v-x"},"fonte inacessível");return h("span",{class:"v-n"},"✖ não encontrado na fonte")}
 function link(u){var f=String(u||"").split(/[;\s]+/).filter(function(x){return /^https?:\/\//.test(x)})[0];return f?h("a",{href:f,target:"_blank",rel:"noopener noreferrer"},"abrir fonte"):null}
+function dayOk(l){if(!S.dia)return true;if(S.dia==="hoje")return l.data===TODAY;if(S.dia==="semana")return inWeek(l);return l.data===S.dia}
 function rows(){
-  var q=norm(S.q);
-  var r=L.filter(function(l){return (!S.seg||l.segmento===S.seg)&&(!q||norm([l.empresa,l.nome,l.cargo,l.cidade,l.email,l.telefone].join(" ")).indexOf(q)>=0)});
-  r.sort(function(a,b){var x,y;
-    if(S.k==="qual"){x=score(a);y=score(b)}else{x=String(a[S.k]||"");y=String(b[S.k]||"");return x.localeCompare(y,"pt")*(S.dir<0?-1:1)}
-    return (x-y)*(S.dir<0?-1:1)||String(a.empresa).localeCompare(String(b.empresa),"pt")});
+  var q=fold(S.q);
+  var r=L.filter(function(l){return (!S.seg||l.segmento===S.seg)&&dayOk(l)&&(!S.nm||named(l))&&(!S.ok||confirmed(l))&&(!S.tel||!!l.telefone)&&(!q||fold([l.empresa,l.nome,l.cargo,l.cidade,l.email,l.telefone].join(" ")).indexOf(q)>=0)});
+  r.sort(function(a,b){var x,y,d=S.dir<0?-1:1;
+    if(S.k==="qual"){x=prio(a);y=prio(b)}else if(S.k==="data"){return String(a.data||"").localeCompare(String(b.data||""))*d||String(a.empresa).localeCompare(String(b.empresa),"pt")}
+    else{x=String(a[S.k]||"");y=String(b[S.k]||"");return x.localeCompare(y,"pt")*d}
+    return (x-y)*d||String(a.empresa).localeCompare(String(b.empresa),"pt")});
   return r;
 }
-function th(label,k){return h("th",{scope:"col"},h("button",{type:"button",onclick:function(){if(S.k===k)S.dir*=-1;else{S.k=k;S.dir=k==="qual"?-1:1}table()}},label+(S.k===k?(S.dir<0?" ▼":" ▲"):"")))}
+function th(label,k){return h("th",{scope:"col"},h("button",{type:"button",onclick:function(){if(S.k===k)S.dir*=-1;else{S.k=k;S.dir=(k==="qual"||k==="data")?-1:1}table()}},label+(S.k===k?(S.dir<0?" ▼":" ▲"):"")))}
 function table(){
   var r=rows();$("#count").textContent=r.length+" de "+L.length;
   if(!r.length){$("#tw").replaceChildren(h("div",{class:"empty"},"Nenhum lead com estes filtros."));return}
   var tb=h("tbody");
-  r.forEach(function(l){var q=qual(l);tb.append(h("tr",{class:l.ronda===lastRonda?"new":""},
+  r.forEach(function(l){var q=qual(l);tb.append(h("tr",{class:(l.data===TODAY||inWeek(l))?"new":""},
+    h("td",{style:"white-space:nowrap"},h("b",null,ddmm(l.data)),h("small",null,l.data?dowName(l.data):"")),
     h("td",null,h("b",null,l.empresa),h("small",null,(l.cidade||"")+(l.segmento?" · "+l.segmento:""))),
     h("td",null,named(l)?l.nome:h("span",{class:"v-x"},"A identificar"),h("small",null,l.cargo||"")),
     h("td",null,cp(l.telefone)),h("td",null,cp(l.email)),
     h("td",null,h("span",{class:"pill "+qc(q)},q)),
-    h("td",null,ver(l),h("small",null,link(l.fonte))),
-    h("td",{style:"color:var(--muted);white-space:nowrap"},String(l.ronda||"").replace(/^\d{4}-/,""))))});
-  $("#tw").replaceChildren(h("table",null,h("thead",null,h("tr",null,th("Empresa","empresa"),th("Contacto","nome"),h("th",{scope:"col"},"Telefone"),h("th",{scope:"col"},"Email"),th("Qualidade","qual"),h("th",{scope:"col"},"Verificação"),th("Ronda","ronda"))),tb));
+    h("td",null,ver(l),h("small",null,link(l.fonte)))))});
+  $("#tw").replaceChildren(h("table",null,h("thead",null,h("tr",null,th("Data","data"),th("Empresa","empresa"),th("Contacto","nome"),h("th",{scope:"col"},"Telefone"),h("th",{scope:"col"},"Email"),th("Qualidade","qual"),h("th",{scope:"col"},"Verificação"))),tb));
 }
 function csv(){
   var r=rows();function q(x){x=String(x==null?"":x);return /[;"\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}
-  var t="﻿"+["Nome;Cargo;Empresa;Segmento;Telefone;Email;Cidade;Fonte;Ronda"].concat(r.map(function(l){return [l.nome,l.cargo,l.empresa,l.segmento,l.telefone,l.email,l.cidade,l.fonte,l.ronda].map(q).join(";")})).join("\r\n");
+  var t="﻿"+["Data;Nome;Cargo;Empresa;Segmento;Telefone;Email;Cidade;Fonte"].concat(r.map(function(l){return [l.data,l.nome,l.cargo,l.empresa,l.segmento,l.telefone,l.email,l.cidade,l.fonte].map(q).join(";")})).join("\r\n");
   var a=h("a",{href:URL.createObjectURL(new Blob([t],{type:"text/csv;charset=utf-8"})),download:"leads-neroes.csv"});document.body.append(a);a.click();a.remove();toast(r.length+" leads exportados");
+}
+
+/* ---- separadores (sem JavaScript todas as secções aparecem em sequência) ---- */
+function showTab(t){["leads","find","how"].forEach(function(k){$("#tab-"+k).hidden=(k!==t);$("#t-"+k).setAttribute("aria-selected",k===t?"true":"false")})}
+document.querySelectorAll("nav.tabs button").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.tab)})});
+
+/* ---- duplicados ---- */
+function dupOf(d,pool){var ne=nrm(d.empresa),nm=nrm(d.email),dp=dg(d.telefone);
+  for(var i=0;i<pool.length;i++){var l=pool[i],nl=nrm(l.empresa);
+    if(ne&&nl&&(nl===ne||(Math.min(nl.length,ne.length)>=5&&(nl.indexOf(ne)>=0||ne.indexOf(nl)>=0))))return "empresa já existe ("+l.empresa+")";
+    if(nm&&nrm(l.email)===nm)return "email já existe ("+l.empresa+")";
+    if(dp&&dg(l.telefone)===dp)return "telefone já existe ("+l.empresa+")"}return ""}
+function poolAll(){return L.concat((DATA.exclusoes||[]).map(function(n){return {empresa:n}}))}
+
+/* ---- pedidos de pesquisa (um por segmento) ---- */
+function makeBrief(seg,n,reg,names){
+  return "Pesquisa na web e encontra "+n+" leads B2B NOVOS do segmento \""+seg+"\" em "+reg+" para a Neroes (treino mental com EEG para clubes e atletas, escolas, ginásios, clínicas e empresas).\n\nREGRAS:\n- Só dados escritos num site oficial da própria entidade (contactos, direção, órgãos sociais, relatório e contas). Nunca inventes nem deduzas emails, telefones ou nomes. Campo desconhecido = \"\".\n- PRIORIDADE ao nome e cargo de um responsável de decisão (presidente, diretor, RH/pessoas, direção técnica ou pedagógica) publicado no site; pelo menos 7 em cada 10 com nome. Sem nome, usa o contacto institucional e deixa o nome vazio.\n- Escolhe páginas em que o email/telefone aparece no HTML estático: um verificador vai reabrir a página da fonte e procurar o contacto.\n- Não uses LinkedIn nem adivinhes emails no formato nome.apelido@. Cada lead com email OU telefone. Diversifica por cidades e regiões.\n- NÃO repitas nenhuma destas entidades (já na base, "+names.length+"): "+names.join("; ")+".\n\nFORMATO: responde APENAS com um array JSON válido (sem texto antes ou depois, sem blocos de código): [{\"nome\":\"\",\"cargo\":\"\",\"empresa\":\"\",\"segmento\":\""+seg+"\",\"telefone\":\"\",\"email\":\"\",\"cidade\":\"\",\"fonte\":\"URL1 ; URL2\"}]. Se não encontrares "+n+" verificados, devolve menos. Não inventes.";
+}
+function renderChecks(){var b=$("#f-segs");b.replaceChildren();ALLSEG.forEach(function(s,i){var id="sg"+i;b.append(h("label",{for:id},h("input",{type:"checkbox",id:id,value:s,checked:true}),s))})}
+function genBriefs(){
+  var segs=[].slice.call(document.querySelectorAll("#f-segs input:checked")).map(function(i){return i.value});
+  if(!segs.length){toast("Escolha pelo menos um segmento");return}
+  var total=Math.max(5,Math.min(100,parseInt($("#n").value,10)||50)),per=Math.ceil(total/segs.length),reg=$("#reg").value.trim()||"Portugal";
+  var seen={},names=[];poolAll().forEach(function(l){var k=nrm(l.empresa);if(k&&!seen[k]){seen[k]=1;names.push(l.empresa)}});
+  var box=$("#briefs");box.replaceChildren();
+  segs.forEach(function(s,i){var t=makeBrief(s,per,reg,names);
+    box.append(h("div",{class:"panel"},h("div",{style:"display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"},h("b",null,"Pedido "+(i+1)+" · "+s+" · "+per+" leads"),h("button",{class:"btn main",type:"button",onclick:function(){copy(t)}},"Copiar pedido")),h("pre",{class:"brief",tabindex:"0"},t)))});
+  $("#binfo").textContent=segs.length+" pedidos · "+names.length+" entidades excluídas";
+}
+
+/* ---- colar resultado ---- */
+var PEND=[];
+function s0(x){return typeof x==="string"?x.trim():(x==null?"":String(x).trim())}
+function parsePaste(txt){
+  var t=String(txt||"").replace(/^﻿/,"").trim();if(!t)return [];
+  if(/^[\[{`]/.test(t)){
+    try{var a=JSON.parse(t.replace(/^`{3}(?:json)?\s*/i,"").replace(/`{3}\s*$/,""));if(!Array.isArray(a))a=[a];
+      return a.map(function(x){x=x||{};return {nome:s0(x.nome),cargo:s0(x.cargo),empresa:s0(x.empresa),segmento:s0(x.segmento),telefone:s0(x.telefone),email:s0(x.email),cidade:s0(x.cidade),fonte:s0(x.fonte)}}).filter(function(r){return r.empresa})}catch(e){return null}
+  }
+  return t.split(/\r?\n/).filter(function(l){return l.trim()&&!/^NOTA:/i.test(l)}).map(function(l){var c=(l.indexOf("\t")>=0?l.split("\t"):l.split(";")).map(function(x){return x.trim()});
+    return c.length<8||/^nome$/i.test(c[0])?null:{nome:c[0],cargo:c[1],empresa:c[2],segmento:c[3],telefone:c[4],email:c[5],cidade:c[7],fonte:c[10]||""}}).filter(function(r){return r&&r.empresa});
+}
+function preview(){
+  var box=$("#preview"),rows0=parsePaste($("#paste").value);PEND=[];
+  if(rows0===null){box.replaceChildren(h("p",{class:"dup"},"O texto colado não é um JSON válido. Peça ao Claude para devolver só o array JSON."));return}
+  if(!rows0.length){box.replaceChildren();return}
+  var pool=poolAll(),res=[];
+  rows0.forEach(function(r){var d=dupOf(r,pool);res.push({r:r,d:d});if(!d){pool.push(r);PEND.push(r)}});
+  var list=h("div",{style:"max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:8px 0"});
+  res.forEach(function(x){list.append(h("div",null,h("b",null,x.r.empresa)," ",h("span",{class:x.d?"dup":"nw"},x.d?"repetido: "+x.d:"novo")))});
+  box.replaceChildren(h("p",null,h("b",null,PEND.length+" novos")," · "+(res.length-PEND.length)+" repetidos ignorados"),list,h("button",{class:"btn main big-btn",type:"button",disabled:!PEND.length,onclick:addPend},"Adicionar "+PEND.length+" ao painel (hoje, "+ddmm(TODAY)+")"));
+}
+function addPend(){
+  PEND.forEach(function(r){LOCAL.push({nome:r.nome||"A identificar (ver Notas)",cargo:r.cargo,empresa:r.empresa,segmento:r.segmento,telefone:r.telefone,email:r.email,cidade:r.cidade,fonte:r.fonte,ronda:"local-"+TODAY,data:TODAY,local:true,verificacao:null})});
+  var ok=saveLocal(LOCAL);toast(PEND.length+" leads adicionados em "+ddmm(TODAY)+(ok?"":" (não foi possível guardar no navegador)"));
+  $("#paste").value="";$("#preview").replaceChildren();PEND=[];refreshAll();
+}
+function recent(){
+  var b=$("#recent"),today=LOCAL.filter(function(l){return l.data===TODAY});
+  if(!LOCAL.length){b.textContent="Ainda nada adicionado neste navegador.";return}
+  b.replaceChildren.apply(b,LOCAL.slice(-8).reverse().map(function(l){return h("div",null,h("b",{style:"color:var(--ink)"},l.empresa)," · "+ddmm(l.data)+" · "+(l.segmento||"")+" · "+(l.cidade||""))}));
+  b.append(h("div",{style:"margin-top:8px"},h("button",{class:"btn main",type:"button",onclick:dlLocal},"Guardar ficheiro ("+LOCAL.length+")")," ",h("button",{class:"btn",type:"button",onclick:function(){LOCAL=[];saveLocal(LOCAL);refreshAll();toast("Lista local limpa")}},"Limpar")));
+}
+function dlLocal(){
+  var a=h("a",{href:URL.createObjectURL(new Blob([JSON.stringify(LOCAL.map(function(l){return {nome:l.nome,cargo:l.cargo,empresa:l.empresa,segmento:l.segmento,telefone:l.telefone,email:l.email,cidade:l.cidade,fonte:l.fonte}}),null,1)],{type:"application/json"})),download:TODAY+"-novos.json"});
+  document.body.append(a);a.click();a.remove();toast("Ficheiro guardado: ponha-o na pasta entrada");
+}
+function refreshAll(){
+  L=DATA.leads.concat(LOCAL);SEGS=[];L.forEach(function(l){if(l.segmento&&SEGS.indexOf(l.segmento)<0)SEGS.push(l.segmento)});
+  renderMeta();kpis();chips();table();recent();
 }
 $("#q").addEventListener("input",function(e){S.q=e.target.value;table()});
 $("#csv").addEventListener("click",csv);
-kpis();chips();table();
+$("#b-gen").addEventListener("click",genBriefs);
+var pvT=null;$("#paste").addEventListener("input",function(){clearTimeout(pvT);pvT=setTimeout(preview,350)});
+renderChecks();refreshAll();showTab("leads");
 })();
 </script>
 </body>
