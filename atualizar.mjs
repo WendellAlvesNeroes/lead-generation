@@ -151,7 +151,7 @@ const kpis = kp(nL, "leads na base") + kp(db.leads.filter((l) => l.data === TODA
 const days = {};
 for (const l of db.leads) if (l.data && l.data >= MON) days[l.data] = (days[l.data] || 0) + 1;
 const falta = Math.max(0, META - wk);
-const metaHtml = `<div class="top"><span class="big">${wk} <small>de ${META} leads esta semana</small></span><span style="color:var(--muted)">${falta ? "faltam " + falta : "meta cumprida ✔"}</span></div><div class="prog"><i style="width:${Math.min(100, Math.round((wk / META) * 100))}%"></i></div><div class="days">${Object.keys(days).sort().reverse().map((d) => `<span class="day"><b>+${days[d]}</b> ${dow(d)} ${ddmm(d)}${d === TODAY ? " (hoje)" : ""}</span>`).join("") || '<span style="color:var(--muted);font-size:13px">Ainda não entrou nenhum lead esta semana.</span>'}</div>`;
+const metaHtml = `<div class="top"><span class="big">${wk} <small>de ${META} leads esta semana</small></span><span style="color:var(--muted)">${falta ? "faltam " + falta : "meta cumprida ✔"}</span></div><div class="prog"><i style="width:${Math.min(100, Math.round((wk / META) * 100))}%"></i></div><div style="margin:8px 0"><a class="btn main big-btn" href="#tab-find">Buscar novos leads</a></div><div class="days">${Object.keys(days).sort().reverse().map((d) => `<span class="day"><b>+${days[d]}</b> ${dow(d)} ${ddmm(d)}${d === TODAY ? " (hoje)" : ""}</span>`).join("") || '<span style="color:var(--muted);font-size:13px">Ainda não entrou nenhum lead esta semana.</span>'}</div>`;
 
 const q = (l) => (score(l) >= 4 ? ["Alta", "alta"] : score(l) >= 2 ? ["Média", "media"] : ["Baixa", "baixa"]);
 const rowsHtml = [...db.leads].sort((a, b) => prio(b) - prio(a) || a.empresa.localeCompare(b.empresa, "pt")).map((l) => {

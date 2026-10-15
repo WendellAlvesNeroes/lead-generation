@@ -17,8 +17,12 @@ header img{height:38px;display:block}
 h1{margin:0;font-size:22px;letter-spacing:.02em;text-transform:uppercase}h1 span{color:var(--brand)}
 .upd{margin-left:auto;color:var(--muted);font-size:13px;text-align:right}
 nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 14px}
-nav.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;color:var(--muted);font:500 15px var(--font)}
-nav.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--brand)}
+nav.tabs a{background:none;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;color:var(--muted);font:500 15px var(--font);text-decoration:none}
+nav.tabs a[aria-selected=true]{color:var(--ink);border-color:var(--brand)}
+a.btn{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}a.main{color:#0A0A0A}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin:8px 0 10px}
+.quick .btn{width:100%;justify-content:center;border-radius:8px;min-height:44px}
+.quick .btn.done{border-color:var(--ok);color:var(--ok)}
 h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:500;margin:16px 0 6px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
 .kpi{background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
@@ -72,9 +76,9 @@ pre.brief{white-space:pre-wrap;word-break:break-word;background:var(--bg);border
   <div class="upd" id="upd">__UPD__</div>
 </header>
 <nav class="tabs" role="tablist" aria-label="Secções">
-  <button role="tab" id="t-leads" aria-selected="true" data-tab="leads">Leads</button>
-  <button role="tab" id="t-find" aria-selected="false" data-tab="find">Buscar novos leads</button>
-  <button role="tab" id="t-how" aria-selected="false" data-tab="how">Como funciona</button>
+  <a role="tab" id="t-leads" href="#tab-leads" aria-selected="true" data-tab="leads">Leads</a>
+  <a role="tab" id="t-find" href="#tab-find" aria-selected="false" data-tab="find">Buscar novos leads</a>
+  <a role="tab" id="t-how" href="#tab-how" aria-selected="false" data-tab="how">Como funciona</a>
 </nav>
 <main>
 
@@ -98,7 +102,10 @@ pre.brief{white-space:pre-wrap;word-break:break-word;background:var(--bg);border
   <p style="color:var(--muted);margin:0 0 10px;max-width:90ch">Cada pedido é para um segmento (10 leads). Copie um pedido, cole-o no Claude (claude.ai ou Claude Code, com pesquisa na web, plano normal: <b>sem créditos de API</b>), e cole aqui o JSON que ele devolver. O painel regista a <b>data</b> e só aceita leads novos.</p>
   <div class="grid2">
     <div>
-      <h2 style="margin-top:0">1. Pedidos de pesquisa</h2>
+      <h2 style="margin-top:0">1. Buscar agora (um clique por segmento)</h2>
+      <p style="color:var(--muted);margin:0 0 6px;font-size:14px">Cada botão <b>copia o pedido</b> e <b>abre o Claude</b> noutro separador. Lá: cole (Ctrl+V), carregue em Enter e espere a resposta.</p>
+      <div class="quick" id="quick"><a class="btn main" href="https://claude.ai/new" target="_blank" rel="noopener noreferrer">Abrir o Claude</a></div>
+      <h2>Opções</h2>
       <div class="panel">
         <div class="field"><label>Segmentos</label><div class="checks" id="f-segs"></div></div>
         <div class="grid2" style="gap:10px"><div class="field"><label for="n">Leads no total</label><input id="n" type="number" min="5" max="100" value="50"></div><div class="field"><label for="reg">Região</label><input id="reg" value="Portugal"></div></div>
@@ -108,7 +115,9 @@ pre.brief{white-space:pre-wrap;word-break:break-word;background:var(--bg);border
       <div id="briefs">__BRIEFS__</div>
     </div>
     <div>
-      <h2 style="margin-top:0">2. Colar o resultado</h2>
+      <h2 style="margin-top:0">2. Trazer o resultado</h2>
+      <p style="color:var(--muted);margin:0 0 6px;font-size:14px">Quando o Claude responder, <b>copie a resposta</b> (botão de copiar dele) e carregue aqui:</p>
+      <button class="btn main big-btn" id="b-paste" type="button" style="margin-bottom:10px">Colar resultado do Claude</button>
       <div class="field"><label for="paste">Resultado do Claude (JSON ou linhas com TAB)</label><textarea id="paste" rows="7" placeholder='[{"nome":"","cargo":"","empresa":"","segmento":"","telefone":"","email":"","cidade":"","fonte":""}]'></textarea></div>
       <div id="preview"></div>
       <div class="note">Os leads adicionados aqui ficam guardados <b>neste navegador</b>. Para ficarem no painel de todos: “Guardar ficheiro” → pôr na pasta <code>entrada</code> → executar <code>atualizar-painel.bat</code> (junta e confirma cada contacto na página de origem).</div>
@@ -195,13 +204,35 @@ function renderMeta(){
     h("div",{class:"top"},h("span",{class:"big"},wk," ",h("small",null,"de "+META+" leads esta semana")),h("span",{style:"color:var(--muted)"},falta?"faltam "+falta:"meta cumprida ✔")),
     h("div",{class:"prog",role:"progressbar","aria-valuenow":wk,"aria-valuemin":0,"aria-valuemax":META},h("i",{style:"width:"+pct+"%"})),
     h("div",{style:"display:flex;flex-wrap:wrap;gap:8px;align-items:center"},
-      h("button",{class:"btn main big-btn",type:"button",onclick:function(){goFind(falta||META)}},falta?"Pedir os "+falta+" que faltam":"Pedir mais leads"),
+      h("button",{class:"btn main big-btn",type:"button",onclick:function(){buscarAgora("")}},falta?"Buscar novos leads ("+falta+" em falta)":"Buscar mais leads"),
       h("button",{class:"btn",type:"button",onclick:function(){S.dia=S.dia==="semana"?"":"semana";chips();table()}},"Ver só os desta semana"),
       h("span",{style:"color:var(--muted);font-size:13px"},"Semana desde "+ddmm(MON))),
     keys.length?h("div",{class:"days"},keys.map(function(d){return h("button",{class:"day",type:"button","aria-pressed":S.dia===d?"true":"false",onclick:function(){S.dia=S.dia===d?"":d;renderMeta();chips();table()}},h("b",null,"+"+days[d])," ",dowName(d)+" "+ddmm(d)+(d===TODAY?" (hoje)":""))})):h("div",{style:"color:var(--muted);font-size:13px"},"Ainda não entrou nenhum lead esta semana.")
   );
 }
-function goFind(n){$("#t-find").click();$("#n").value=n;$("#b-gen").click()}
+/* ---- buscar agora: copia o pedido e abre o Claude ---- */
+function perSeg(){var segs=[].slice.call(document.querySelectorAll("#f-segs input:checked")).length||5;return Math.ceil(Math.max(5,Math.min(100,parseInt($("#n").value,10)||50))/segs)}
+function namesAll(){var seen={},names=[];poolAll().forEach(function(l){var k=nrm(l.empresa);if(k&&!seen[k]){seen[k]=1;names.push(l.empresa)}});return names}
+function weekCount(seg){return L.filter(function(l){return l.segmento===seg&&inWeek(l)}).length}
+function buscarAgora(seg){
+  if(!seg){seg=ALLSEG.slice().sort(function(a,b){return weekCount(a)-weekCount(b)})[0]}
+  var per=perSeg(),reg=$("#reg").value.trim()||"Portugal",text=makeBrief(seg,per,reg,namesAll());
+  showTab("find");window.scrollTo(0,0);
+  copy(text);
+  toast("Pedido de "+seg+" copiado. No Claude: Ctrl+V e Enter.");
+  var w=null;try{w=window.open("https://claude.ai/new","_blank","noopener,noreferrer")}catch(e){}
+  if(!w)toast("Pedido de "+seg+" copiado. Abra o Claude e cole (Ctrl+V).");
+}
+function quick(){
+  var box=$("#quick");if(!box)return;box.replaceChildren();var per=perSeg();
+  ALLSEG.forEach(function(s){var c=weekCount(s),done=c>=per;
+    box.append(h("button",{class:"btn"+(done?" done":""),type:"button",onclick:function(){buscarAgora(s)}},(done?"✔ ":"")+s+" · "+c+" esta semana"))});
+}
+function colarClip(){
+  function manual(){$("#paste").focus();toast("Cole com Ctrl+V na caixa abaixo")}
+  try{if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){if(!t||!t.trim()){manual();return}$("#paste").value=t;preview()},manual);return}}catch(e){}
+  manual();
+}
 
 function kpis(){
   var n=L.length,nm=L.filter(named).length,ver=L.filter(confirmed).length,ran=L.filter(function(l){return l.verificacao}).length;
@@ -258,7 +289,7 @@ function csv(){
 
 /* ---- separadores (sem JavaScript todas as secções aparecem em sequência) ---- */
 function showTab(t){["leads","find","how"].forEach(function(k){$("#tab-"+k).hidden=(k!==t);$("#t-"+k).setAttribute("aria-selected",k===t?"true":"false")})}
-document.querySelectorAll("nav.tabs button").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.tab)})});
+document.querySelectorAll("nav.tabs a").forEach(function(b){b.addEventListener("click",function(e){e.preventDefault();showTab(b.dataset.tab);window.scrollTo(0,0)})});
 
 /* ---- duplicados ---- */
 function dupOf(d,pool){var ne=nrm(d.empresa),nm=nrm(d.email),dp=dg(d.telefone);
@@ -323,11 +354,12 @@ function dlLocal(){
 }
 function refreshAll(){
   L=DATA.leads.concat(LOCAL);SEGS=[];L.forEach(function(l){if(l.segmento&&SEGS.indexOf(l.segmento)<0)SEGS.push(l.segmento)});
-  renderMeta();kpis();chips();table();recent();
+  renderMeta();kpis();chips();table();recent();quick();
 }
 $("#q").addEventListener("input",function(e){S.q=e.target.value;table()});
 $("#csv").addEventListener("click",csv);
 $("#b-gen").addEventListener("click",genBriefs);
+$("#b-paste").addEventListener("click",colarClip);
 var pvT=null;$("#paste").addEventListener("input",function(){clearTimeout(pvT);pvT=setTimeout(preview,350)});
 renderChecks();refreshAll();showTab("leads");
 })();
