@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Busca de Leads Neroes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#0A0A0A;--tint:#141416;--raise:#1B1B1E;--ink:#F2F1ED;--muted:#A09F99;--line:#2A2A2E;--brand:#00A5E9;--ok:#5CCB93;--ok-s:#10261B;--warn:#E4B054;--warn-s:#2B2110;--bad:#F08178;--bad-s:#2E1513;--font:"Roboto Condensed","Arial Narrow",Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 var(--font);padding:0 20px 48px;font-variant-numeric:tabular-nums}
+.wrap{max-width:1280px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:20px 0 12px;border-bottom:1px solid var(--line);margin-bottom:16px}
+header img{height:38px;display:block}
+h1{margin:0;font-size:22px;letter-spacing:.02em;text-transform:uppercase}h1 span{color:var(--brand)}
+.upd{margin-left:auto;color:var(--muted);font-size:13px;text-align:right}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+.kpi b{display:block;font-size:30px;line-height:1.1}.kpi span{color:var(--muted);font-size:13px}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line);gap:2px;margin:2px 0 6px}.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--muted);font-size:13px;margin-bottom:14px}.legend em{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:500;margin:16px 0 6px}
+.rondas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.ronda{background:var(--tint);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13.5px}.ronda b{color:var(--ok);font-size:16px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 10px}
+input[type=search]{flex:1 1 240px;min-width:0;background:var(--tint);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:inherit;font:inherit;min-height:38px}
+.chip,.btn{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer;min-height:34px}
+.chip[aria-pressed=true]{background:var(--ink);color:#0A0A0A;border-color:var(--ink)}
+.btn{border-radius:6px}.btn:hover,.chip:hover{border-color:var(--brand)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:1000px;font-size:14px}
+th,td{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--tint);color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+th button{all:unset;cursor:pointer}tr:last-child td{border-bottom:0}tbody tr:hover{background:var(--tint)}
+td b{font-weight:700}td small{display:block;color:var(--muted);font-size:12.5px}
+.cp{display:flex;gap:6px;align-items:flex-start}.cp span{word-break:break-all}
+.cpb{background:none;border:1px solid var(--line);border-radius:4px;font-size:11px;padding:1px 6px;cursor:pointer;color:var(--muted);min-height:24px}
+.pill{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12.5px;font-weight:500;white-space:nowrap}
+.alta{background:var(--ok-s);color:var(--ok)}.media{background:var(--warn-s);color:var(--warn)}.baixa{background:var(--bad-s);color:var(--bad)}
+.v-c{color:var(--ok)}.v-n{color:var(--bad)}.v-x{color:var(--muted)}
+a{color:var(--brand)}.new td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
+.empty{padding:36px;text-align:center;color:var(--muted)}
+.foot{color:var(--muted);font-size:12.5px;margin-top:14px;max-width:90ch}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#0A0A0A;padding:8px 16px;border-radius:6px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <img src="__LOGO__" alt="Neroes">
+  <h1>Busca de <span>Leads</span></h1>
+  <div class="upd" id="upd"></div>
+</header>
+<main>
+  <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+  <div id="dist"></div>
+  <h2>Rondas de pesquisa</h2>
+  <div class="rondas" id="rondas"></div>
+  <div class="tools" role="search">
+    <label for="q" style="position:absolute;left:-9999px">Pesquisar</label>
+    <input type="search" id="q" placeholder="Pesquisar empresa, pessoa, cidade, email…">
+    <span id="chips" role="group" aria-label="Segmento" style="display:flex;flex-wrap:wrap;gap:6px"></span>
+    <button class="btn" id="csv" type="button">Exportar CSV</button>
+    <span style="color:var(--muted);font-size:13px" id="count" role="status"></span>
+  </div>
+  <div class="tw" id="tw"></div>
+  <p class="foot">Dados lidos em sites oficiais das entidades. “Confirmado na fonte” significa que o email ou telefone voltou a aparecer na página de origem quando foi verificado. Contactos institucionais não são o contacto direto do decisor. Contactos com nome de pessoa só devem ser usados com base legal (RGPD).</p>
+</main>
+</div>
+<div id="toast" hidden></div>
+<script>
+(function(){
+"use strict";
+var DATA=/*__DATA__*/null;
+var SEGCOL={"Desporto":"#00A5E9","Educação Privada":"#8D99AE","Fitness":"#2EC4A0","Corporate":"#E0A14B","Clínicas e Saúde":"#B07CC6"};
+var S={q:"",seg:"",k:"qual",dir:-1};
+var $=function(s){return document.querySelector(s)};
+function h(t,p){var e=document.createElement(t);if(p)Object.keys(p).forEach(function(k){var v=p[k];if(k==="class")e.className=v;else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,"");else if(v!==false&&v!=null)e.setAttribute(k,v)});for(var i=2;i<arguments.length;i++)[].concat(arguments[i]).forEach(function(c){if(c==null||c===false)return;e.append(c&&c.nodeType?c:document.createTextNode(String(c)))});return e}
+function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},2500)}
+function copy(txt){try{navigator.clipboard.writeText(txt).then(function(){toast("Copiado")},function(){fb()})}catch(e){fb()}function fb(){var a=h("textarea",{style:"position:fixed;opacity:0"});a.value=txt;document.body.append(a);a.select();try{document.execCommand("copy");toast("Copiado")}catch(e){toast("Selecione e copie manualmente")}a.remove()}}
+function norm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+function named(l){return !!(l.nome&&l.nome.trim()&&!/^a identificar/i.test(l.nome))}
+function score(l){return (named(l)?2:0)+(l.email?1:0)+(l.telefone?1:0)}
+function qual(l){var s=score(l);return s>=4?"Alta":s>=2?"Média":"Baixa"}
+function qc(q){return q==="Alta"?"alta":q==="Média"?"media":"baixa"}
+var L=DATA.leads;
+var lastRonda=DATA.rondas.length?DATA.rondas[DATA.rondas.length-1].id:"";
+var SEGS=[];L.forEach(function(l){if(l.segmento&&SEGS.indexOf(l.segmento)<0)SEGS.push(l.segmento)});
+
+function kpis(){
+  var n=L.length,nm=L.filter(named).length,ver=L.filter(function(l){return l.verificacao&&l.verificacao.estado==="confirmado"}).length,ran=L.filter(function(l){return l.verificacao}).length;
+  var nw=L.filter(function(l){return l.ronda===lastRonda}).length;
+  function t(v,s){return h("div",{class:"kpi"},h("b",null,v),h("span",null,s))}
+  $("#kpis").replaceChildren(t(n,"leads na base"),t(nw,"da última ronda"),t(n?Math.round(nm/n*100)+"%":"0%","com nome de decisor"),t(ran?ver+" de "+ran:"—","confirmados na fonte"));
+  var bar=h("div",{class:"bar",role:"img","aria-label":"Distribuição por segmento"}),leg=h("div",{class:"legend"});
+  SEGS.forEach(function(s){var c=L.filter(function(l){return l.segmento===s}).length;bar.append(h("i",{style:"width:"+c/n*100+"%;background:"+(SEGCOL[s]||"#888")}));leg.append(h("span",null,h("em",{style:"background:"+(SEGCOL[s]||"#888")}),s+" "+c))});
+  $("#dist").replaceChildren(bar,leg);
+  $("#upd").replaceChildren(h("div",null,"Atualizado em "+new Date(DATA.atualizado).toLocaleString("pt-PT",{dateStyle:"short",timeStyle:"short"})));
+  $("#rondas").replaceChildren.apply($("#rondas"),DATA.rondas.map(function(r){return h("div",{class:"ronda"},h("b",null,"+"+r.novos)," ",r.id.replace(/^\d{4}-/,""),h("small",{style:"color:var(--muted)"},"  ("+r.repetidos+" repetidos ignorados)"))}));
+}
+function chips(){
+  var box=$("#chips");box.replaceChildren();
+  [""].concat(SEGS).forEach(function(s){box.append(h("button",{class:"chip",type:"button","aria-pressed":S.seg===s?"true":"false",onclick:function(){S.seg=s;chips();table()}},s||"Todos"))});
+}
+function cp(t){return t?h("div",{class:"cp"},h("span",null,t),h("button",{class:"cpb",type:"button","aria-label":"Copiar "+t,onclick:function(){copy(t)}},"copiar")):h("span",{class:"v-x"},"—")}
+function ver(l){
+  var v=l.verificacao;
+  if(!v)return h("span",{class:"v-x"},"não verificado");
+  if(v.estado==="confirmado")return h("span",{class:"v-c"},"✔ confirmado na fonte");
+  if(v.estado==="sem_acesso")return h("span",{class:"v-x"},"fonte inacessível");
+  return h("span",{class:"v-n"},"✖ não encontrado na fonte");
+}
+function link(u){var f=String(u||"").split(/[;\s]+/).filter(function(x){return /^https?:\/\//.test(x)})[0];return f?h("a",{href:f,target:"_blank",rel:"noopener noreferrer"},"abrir fonte"):null}
+function rows(){
+  var q=norm(S.q);
+  var r=L.filter(function(l){return (!S.seg||l.segmento===S.seg)&&(!q||norm([l.empresa,l.nome,l.cargo,l.cidade,l.email,l.telefone].join(" ")).indexOf(q)>=0)});
+  r.sort(function(a,b){var x,y;
+    if(S.k==="qual"){x=score(a);y=score(b)}else{x=String(a[S.k]||"");y=String(b[S.k]||"");return x.localeCompare(y,"pt")*(S.dir<0?-1:1)}
+    return (x-y)*(S.dir<0?-1:1)||String(a.empresa).localeCompare(String(b.empresa),"pt")});
+  return r;
+}
+function th(label,k){return h("th",{scope:"col"},h("button",{type:"button",onclick:function(){if(S.k===k)S.dir*=-1;else{S.k=k;S.dir=k==="qual"?-1:1}table()}},label+(S.k===k?(S.dir<0?" ▼":" ▲"):"")))}
+function table(){
+  var r=rows();$("#count").textContent=r.length+" de "+L.length;
+  if(!r.length){$("#tw").replaceChildren(h("div",{class:"empty"},"Nenhum lead com estes filtros."));return}
+  var tb=h("tbody");
+  r.forEach(function(l){var q=qual(l);tb.append(h("tr",{class:l.ronda===lastRonda?"new":""},
+    h("td",null,h("b",null,l.empresa),h("small",null,(l.cidade||"")+(l.segmento?" · "+l.segmento:""))),
+    h("td",null,named(l)?l.nome:h("span",{class:"v-x"},"A identificar"),h("small",null,l.cargo||"")),
+    h("td",null,cp(l.telefone)),h("td",null,cp(l.email)),
+    h("td",null,h("span",{class:"pill "+qc(q)},q)),
+    h("td",null,ver(l),h("small",null,link(l.fonte))),
+    h("td",{style:"color:var(--muted);white-space:nowrap"},String(l.ronda||"").replace(/^\d{4}-/,""))))});
+  $("#tw").replaceChildren(h("table",null,h("thead",null,h("tr",null,th("Empresa","empresa"),th("Contacto","nome"),h("th",{scope:"col"},"Telefone"),h("th",{scope:"col"},"Email"),th("Qualidade","qual"),h("th",{scope:"col"},"Verificação"),th("Ronda","ronda"))),tb));
+}
+function csv(){
+  var r=rows();function q(x){x=String(x==null?"":x);return /[;"\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}
+  var t="﻿"+["Nome;Cargo;Empresa;Segmento;Telefone;Email;Cidade;Fonte;Ronda"].concat(r.map(function(l){return [l.nome,l.cargo,l.empresa,l.segmento,l.telefone,l.email,l.cidade,l.fonte,l.ronda].map(q).join(";")})).join("\r\n");
+  var a=h("a",{href:URL.createObjectURL(new Blob([t],{type:"text/csv;charset=utf-8"})),download:"leads-neroes.csv"});document.body.append(a);a.click();a.remove();toast(r.length+" leads exportados");
+}
+$("#q").addEventListener("input",function(e){S.q=e.target.value;table()});
+$("#csv").addEventListener("click",csv);
+kpis();chips();table();
+})();
+</script>
+</body>
+</html>
