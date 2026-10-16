@@ -32,6 +32,35 @@ function findDup(d, pool) {
 
 /* ---------- leitura de ficheiros de entrada ---------- */
 const s0 = (x) => (typeof x === "string" ? x.trim() : x == null ? "" : String(x).trim());
+
+/** Lê um .xlsx com as colunas da base da equipa (Nome, Cargo, Empresa, Segmento, Telefone, Email, LinkedIn, Cidade, Responsável, Estado). */
+async function parseXlsx(file) {
+  const { default: ExcelJS } = await import("exceljs");
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.readFile(file);
+  const ws = wb.worksheets[0];
+  const txt = (row, c) => String(row.getCell(c).text ?? "").trim();
+  // descobre a coluna de cada campo pelo cabeçalho; se não houver, usa a ordem da base da equipa
+  const head = {};
+  ws.getRow(1).eachCell((cell, c) => { head[norm(cell.text)] = c; });
+  const col = (nome, fallback) => head[norm(nome)] ?? fallback;
+  const C = { nome: col("Nome", 1), cargo: col("Cargo", 2), empresa: col("Empresa", 3), segmento: col("Segmento", 4), telefone: col("Telefone", 5), email: col("Email", 6), linkedin: col("LinkedIn", 7), cidade: col("Cidade", 8), responsavel: col("Responsável", 9), estado: col("Estado", 10), fonte: col("Fonte", 0) };
+  const out = [];
+  ws.eachRow({ includeEmpty: false }, (row, n) => {
+    if (n === 1) return;
+    const empresa = txt(row, C.empresa);
+    if (!empresa || norm(empresa) === "empresa") return;
+    const estado = txt(row, C.estado);
+    out.push({
+      nome: txt(row, C.nome), cargo: txt(row, C.cargo), empresa, segmento: txt(row, C.segmento),
+      telefone: txt(row, C.telefone), email: txt(row, C.email), cidade: txt(row, C.cidade),
+      estado: ESTADOS.includes(estado) ? estado : "Por Contactar",
+      fonte: C.fonte ? txt(row, C.fonte) : path.basename(file),
+    });
+  });
+  return out;
+}
+
 function parseFile(file) {
   const raw = readFileSync(file, "utf8").replace(/^﻿/, "").trim();
   if (/^[\[{`]/.test(raw)) {
@@ -95,9 +124,9 @@ async function pool(items, n, fn) { let i = 0; await Promise.all(Array.from({ le
 /* ---------- principal ---------- */
 mkdirSync(path.dirname(DADOS), { recursive: true });
 const db = existsSync(DADOS) ? JSON.parse(readFileSync(DADOS, "utf8")) : { leads: [], rondas: [], ficheiros: [] };
-const files = readdirSync(ENTRADA).filter((f) => /\.(tsv|csv|json|txt)$/i.test(f) && !db.ficheiros.includes(f)).sort();
+const files = readdirSync(ENTRADA).filter((f) => /\.(tsv|csv|json|txt|xlsx)$/i.test(f) && !/^~\$/.test(f) && !db.ficheiros.includes(f)).sort();
 for (const f of files) {
-  const rows = parseFile(path.join(ENTRADA, f));
+  const rows = /.xlsx$/i.test(f) ? await parseXlsx(path.join(ENTRADA, f)) : parseFile(path.join(ENTRADA, f));
   const ronda = f.replace(/\.[^.]+$/, "");
   const data = statSync(path.join(ENTRADA, f)).mtime.toISOString();
   let novos = 0, repetidos = 0;

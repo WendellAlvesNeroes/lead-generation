@@ -1,0 +1,24 @@
+{
+  "name": "painel",
+  "version": "1.0.0",
+  "description": "Uma única página (`painel-leads.html`) que mostra o estado da busca de leads. **Sem servidor, sem API do Claude, sem custo.**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WendellAlvesNeroes/lead-generation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/WendellAlvesNeroes/lead-generation/issues"
+  },
+  "homepage": "https://github.com/WendellAlvesNeroes/lead-generation#readme",
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}
