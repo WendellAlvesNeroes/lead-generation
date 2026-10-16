@@ -163,6 +163,20 @@ const MON = ymd(mon);
 const ddmm = (s) => (s ? `${s.slice(8, 10)}/${s.slice(5, 7)}` : "—");
 const dow = (s) => ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"][new Date(s + "T12:00:00").getDay()];
 
+// --- Neroes Flow: marca quem já lá está e calcula a prioridade de contacto ---
+const { noFlow, prioridade } = await import("./scripts/prioridade.mjs");
+const flowFile = path.join(here, "dados", "flow-clientes.txt");
+const flowClientes = existsSync(flowFile) ? readFileSync(flowFile, "utf8").split(/\r?\n/).map((x) => x.trim()).filter((x) => x && !x.startsWith("#")) : [];
+for (const l of db.leads) {
+  l.flow = noFlow(l, flowClientes);
+  const { p, porque } = prioridade(l);
+  l.prioridade = p;
+  l.porque = porque;
+}
+const nFlow = db.leads.filter((l) => l.flow).length;
+const fila = db.leads.filter((l) => !l.flow).sort((a, b) => b.prioridade - a.prioridade || a.empresa.localeCompare(b.empresa, "pt"));
+console.log(`Flow: ${nFlow} leads já lá estão · fila de contacto: ${fila.length} · topo: ${fila[0]?.empresa} (${fila[0]?.prioridade})`);
+
 const exclFile = path.join(here, "dados", "exclusoes-base.txt");
 const exclusoes = existsSync(exclFile) ? readFileSync(exclFile, "utf8").replace(/\([^)]*\)/g, "").split(/[;\n]/).map((x) => x.trim()).filter(Boolean) : [];
 const json = JSON.stringify({ leads: db.leads, rondas: db.rondas, atualizado: db.atualizado, exclusoes, meta: META }).replace(/</g, "\\u003c");
@@ -198,12 +212,18 @@ writeFileSync(path.join(here, "dados", "exclusoes.txt"), "JÁ NA BASE (não repe
 const brief = (seg, n) => `Pesquisa na web e encontra ${n} leads B2B NOVOS do segmento "${seg}" em Portugal para a Neroes (treino mental com EEG para clubes e atletas, escolas, ginásios, clínicas e empresas).\n\nREGRAS:\n- Só dados escritos num site oficial da própria entidade (contactos, direção, órgãos sociais, relatório e contas). Nunca inventes nem deduzas emails, telefones ou nomes. Campo desconhecido = "".\n- PRIORIDADE ao nome e cargo de um responsável de decisão publicado no site; pelo menos 7 em cada 10 com nome. Sem nome, usa o contacto institucional e deixa o nome vazio.\n- Escolhe páginas em que o email/telefone aparece no HTML estático: um verificador vai reabrir a página da fonte e procurar o contacto.\n- Não uses LinkedIn nem adivinhes emails no formato nome.apelido@. Cada lead com email OU telefone. Diversifica por cidades e regiões.\n- NÃO repitas nenhuma destas entidades (já na base, ${names.length}): ${names.join("; ")}.\n\nFORMATO: responde APENAS com um array JSON válido (sem texto antes ou depois, sem blocos de código): [{"nome":"","cargo":"","empresa":"","segmento":"${seg}","telefone":"","email":"","cidade":"","fonte":"URL1 ; URL2"}]. Se não encontrares ${n} verificados, devolve menos. Não inventes.`;
 const briefsHtml = ["Desporto", "Educação Privada", "Fitness", "Corporate", "Clínicas e Saúde"].map((s, i) => `<div class="panel"><b>Pedido ${i + 1} · ${s} · 10 leads</b><pre class="brief" tabindex="0">${esc(brief(s, 10))}</pre></div>`).join("");
 
+// bloco "Próximos a contactar" pré-escrito (visível mesmo sem JavaScript)
+const top5 = fila.filter((l) => (l.estado || "Por Contactar") === "Por Contactar").slice(0, 5);
+const proximosHtml = top5.length
+  ? `<h2>Próximos a contactar</h2><div class="fila">${top5.map((l, i) => `<div class="it"><div class="n">${i + 1}</div><div><b>${esc(l.empresa)}</b><small>${esc(named(l) ? l.nome + (l.cargo ? " · " + l.cargo : "") : "A identificar")} · ${esc(l.cidade)} · ${esc(l.segmento)}</small><small style="color:var(--brand)">${esc(l.porque)}</small></div><div class="ct">${esc(l.telefone)}<br><span class="v-x">${esc(l.email)}</span></div></div>`).join("")}</div>`
+  : "";
+
 const upd = `Atualizado em ${now.toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })}`;
 const tpl = readFileSync(path.join(here, "template.html"), "utf8");
 const logo = readFileSync(path.join(here, "assets", "logo.png")).toString("base64");
 writeFileSync(
   path.join(here, "painel-leads.html"),
-  tpl.replace("__LOGO__", () => "data:image/png;base64," + logo).replace("/*__DATA__*/null", () => json).replace("__UPD__", () => upd).replace("__META__", () => metaHtml).replace("__KPIS__", () => kpis).replace("__TABLE__", () => tableHtml).replace("__BRIEFS__", () => briefsHtml),
+  tpl.replace("__LOGO__", () => "data:image/png;base64," + logo).replace("/*__DATA__*/null", () => json).replace("__UPD__", () => upd).replace("__META__", () => metaHtml).replace("__PROXIMOS__", () => proximosHtml).replace("__KPIS__", () => kpis).replace("__TABLE__", () => tableHtml).replace("__BRIEFS__", () => briefsHtml),
 );
 db.atualizado = now.toISOString();
 writeFileSync(DADOS, JSON.stringify(db, null, 1));

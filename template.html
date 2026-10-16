@@ -65,6 +65,12 @@ pre.brief{white-space:pre-wrap;word-break:break-word;background:var(--bg);border
 .steps li:before{content:counter(s);width:28px;height:28px;border-radius:50%;border:1px solid var(--brand);color:var(--brand);display:grid;place-items:center;font-weight:700;font-size:14px}
 .note{background:var(--warn-s);border-left:3px solid var(--warn);padding:8px 12px;border-radius:0 6px 6px 0;font-size:14px;margin:10px 0}
 .dup{color:var(--bad)}.nw{color:var(--ok)}
+.fila{display:grid;gap:8px;margin-bottom:14px}
+.fila .it{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.fila .n{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#0A0A0A;display:grid;place-items:center;font-weight:700}
+.fila b{font-size:16px}.fila small{display:block;color:var(--muted);font-size:12.5px}
+.fila .ct{text-align:right;white-space:nowrap;font-size:13.5px}
+.flowtag{background:var(--warn-s);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:12px;font-weight:500;margin-left:6px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#0A0A0A;padding:8px 16px;border-radius:6px;font-size:14px}
 </style>
 </head>
@@ -84,6 +90,7 @@ pre.brief{white-space:pre-wrap;word-break:break-word;background:var(--bg);border
 
 <section id="tab-leads">
   <section class="meta" id="meta" aria-label="Meta da semana">__META__</section>
+  <section id="proximos" aria-label="Próximos a contactar">__PROXIMOS__</section>
   <section class="kpis" id="kpis" aria-label="Indicadores">__KPIS__</section>
   <div id="dist"></div>
   <div class="tools" role="search">
@@ -164,7 +171,7 @@ var DATA=/*__DATA__*/null;
 var META=DATA.meta||50;
 var SEGCOL={"Desporto":"#00A5E9","Educação Privada":"#8D99AE","Fitness":"#2EC4A0","Corporate":"#E0A14B","Clínicas e Saúde":"#B07CC6"};
 var ALLSEG=["Desporto","Educação Privada","Fitness","Corporate","Clínicas e Saúde"];
-var S={q:"",seg:"",dia:"",k:"qual",dir:-1,nm:false,ok:false,tel:false};
+var S={q:"",seg:"",dia:"",k:"qual",dir:-1,nm:false,ok:false,tel:false,flow:false};
 var $=function(s){return document.querySelector(s)};
 function h(t,p){var e=document.createElement(t);if(p)Object.keys(p).forEach(function(k){var v=p[k];if(k==="class")e.className=v;else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,"");else if(v!==false&&v!=null)e.setAttribute(k,v)});for(var i=2;i<arguments.length;i++)[].concat(arguments[i]).forEach(function(c){if(c==null||c===false)return;e.append(c&&c.nodeType?c:document.createTextNode(String(c)))});return e}
 function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},2600)}
@@ -177,7 +184,19 @@ function score(l){return (named(l)?2:0)+(l.email?1:0)+(l.telefone?1:0)}
 function qual(l){var s=score(l);return s>=4?"Alta":s>=2?"Média":"Baixa"}
 function qc(q){return q==="Alta"?"alta":q==="Média"?"media":"baixa"}
 function confirmed(l){return !!(l.verificacao&&l.verificacao.estado==="confirmado")}
-function prio(l){return score(l)*10+(confirmed(l)?5:0)}
+function prio(l){return typeof l.prioridade==="number"?l.prioridade:score(l)*10+(confirmed(l)?5:0)}
+function renderProximos(){
+  var box=$("#proximos");if(!box)return;
+  var fila=L.filter(function(l){return !l.flow&&(l.estado||"Por Contactar")==="Por Contactar"}).sort(function(a,b){return prio(b)-prio(a)||String(a.empresa).localeCompare(String(b.empresa),"pt")}).slice(0,5);
+  if(!fila.length){box.replaceChildren();return}
+  var wrap=h("div",null,h("h2",null,"Próximos a contactar"),h("div",{class:"fila"},fila.map(function(l,i){
+    return h("div",{class:"it"},h("div",{class:"n"},i+1),
+      h("div",null,h("b",null,l.empresa),h("small",null,(named(l)?l.nome+(l.cargo?" · "+l.cargo:""):"A identificar")+" · "+(l.cidade||"")+" · "+(l.segmento||"")),h("small",{style:"color:var(--brand)"},l.porque||"")),
+      h("div",{class:"ct"},l.telefone?h("div",null,l.telefone):null,l.email?h("div",{class:"v-x"},l.email):null,
+        h("button",{class:"cpb",style:"margin-top:4px",type:"button",onclick:function(){copy([l.empresa,named(l)?l.nome:"",l.cargo,l.telefone,l.email,l.cidade].filter(Boolean).join(" · "))}},"copiar contacto")));
+  })));
+  box.replaceChildren(wrap);
+}
 
 /* ---- datas ---- */
 function ymd(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
@@ -253,6 +272,7 @@ function chips(){
   c("Esta semana",S.dia==="semana",function(){S.dia=S.dia==="semana"?"":"semana";renderMeta();chips();table()});
   box.append(h("span",{style:"width:1px;background:var(--line);margin:0 4px"}));
   [["nm","Com nome"],["ok","Confirmados"],["tel","Com telefone"]].forEach(function(f){c(f[1],S[f[0]],function(){S[f[0]]=!S[f[0]];chips();table()})});
+  c("Já no Flow",S.flow,function(){S.flow=!S.flow;chips();table()});
 }
 function cp(t){return t?h("div",{class:"cp"},h("span",null,t),h("button",{class:"cpb",type:"button","aria-label":"Copiar "+t,onclick:function(){copy(t)}},"copiar")):h("span",{class:"v-x"},"—")}
 function ver(l){var v=l.verificacao;if(!v)return h("span",{class:"v-x"},"não verificado");if(v.estado==="confirmado")return h("span",{class:"v-c"},"✔ confirmado na fonte");if(v.estado==="sem_fonte")return h("span",{class:"v-x"},"sem fonte (base da equipa)");
@@ -261,7 +281,7 @@ function link(u){var f=String(u||"").split(/[;\s]+/).filter(function(x){return /
 function dayOk(l){if(!S.dia)return true;if(S.dia==="hoje")return l.data===TODAY;if(S.dia==="semana")return inWeek(l);return l.data===S.dia}
 function rows(){
   var q=fold(S.q);
-  var r=L.filter(function(l){return (!S.seg||l.segmento===S.seg)&&dayOk(l)&&(!S.nm||named(l))&&(!S.ok||confirmed(l))&&(!S.tel||!!l.telefone)&&(!q||fold([l.empresa,l.nome,l.cargo,l.cidade,l.email,l.telefone].join(" ")).indexOf(q)>=0)});
+  var r=L.filter(function(l){return (!S.seg||l.segmento===S.seg)&&dayOk(l)&&(!S.nm||named(l))&&(!S.ok||confirmed(l))&&(!S.tel||!!l.telefone)&&(!S.flow||!!l.flow)&&(!q||fold([l.empresa,l.nome,l.cargo,l.cidade,l.email,l.telefone].join(" ")).indexOf(q)>=0)});
   r.sort(function(a,b){var x,y,d=S.dir<0?-1:1;
     if(S.k==="qual"){x=prio(a);y=prio(b)}else if(S.k==="data"){return String(a.data||"").localeCompare(String(b.data||""))*d||String(a.empresa).localeCompare(String(b.empresa),"pt")}
     else{x=String(a[S.k]||"");y=String(b[S.k]||"");return x.localeCompare(y,"pt")*d}
@@ -275,7 +295,7 @@ function table(){
   var tb=h("tbody");
   r.forEach(function(l){var q=qual(l);tb.append(h("tr",{class:(l.data===TODAY||inWeek(l))?"new":""},
     h("td",{style:"white-space:nowrap"},h("b",null,ddmm(l.data)),h("small",null,l.data?dowName(l.data):"")),
-    h("td",null,h("b",null,l.empresa),h("small",null,(l.cidade||"")+(l.segmento?" · "+l.segmento:""))),
+    h("td",null,h("b",null,l.empresa),l.flow?h("span",{class:"flowtag"},"no Flow"):null,h("small",null,(l.cidade||"")+(l.segmento?" · "+l.segmento:""))),
     h("td",null,named(l)?l.nome:h("span",{class:"v-x"},"A identificar"),h("small",null,l.cargo||"")),
     h("td",null,cp(l.telefone)),h("td",null,cp(l.email)),
     h("td",null,h("span",{class:"pill "+qc(q)},q)),
@@ -355,7 +375,7 @@ function dlLocal(){
 }
 function refreshAll(){
   L=DATA.leads.concat(LOCAL);SEGS=[];L.forEach(function(l){if(l.segmento&&SEGS.indexOf(l.segmento)<0)SEGS.push(l.segmento)});
-  renderMeta();kpis();chips();table();recent();quick();
+  renderMeta();renderProximos();kpis();chips();table();recent();quick();
 }
 $("#q").addEventListener("input",function(e){S.q=e.target.value;table()});
 $("#csv").addEventListener("click",csv);
