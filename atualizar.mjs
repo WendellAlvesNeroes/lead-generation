@@ -107,6 +107,7 @@ async function verificar(l) {
   const urls = [...new Set(String(l.fonte).split(/[;\s]+/).filter((u) => /^https?:\/\//i.test(u)))].slice(0, 3);
   const pages = [];
   for (const u of urls) { try { pages.push(await pageText(u)); } catch { /* inacessível */ } }
+  if (!urls.length) return { estado: "sem_fonte", data: new Date().toISOString() };
   if (!pages.length) return { estado: "sem_acesso", data: new Date().toISOString() };
   const all = pages.join(" "), low = all.toLowerCase(), dig = all.replace(/\D/g, ""), nn = norm(all);
   const em = l.email.toLowerCase(), td = digits(l.telefone);
@@ -185,7 +186,7 @@ const metaHtml = `<div class="top"><span class="big">${wk} <small>de ${META} lea
 const q = (l) => (score(l) >= 4 ? ["Alta", "alta"] : score(l) >= 2 ? ["Média", "media"] : ["Baixa", "baixa"]);
 const rowsHtml = [...db.leads].sort((a, b) => prio(b) - prio(a) || a.empresa.localeCompare(b.empresa, "pt")).map((l) => {
   const [ql, qc] = q(l);
-  const v = !l.verificacao ? "não verificado" : l.verificacao.estado === "confirmado" ? "✔ confirmado na fonte" : l.verificacao.estado === "sem_acesso" ? "fonte inacessível" : "✖ não encontrado na fonte";
+  const v = !l.verificacao ? "não verificado" : l.verificacao.estado === "confirmado" ? "✔ confirmado na fonte" : l.verificacao.estado === "sem_fonte" ? "sem fonte (base da equipa)" : l.verificacao.estado === "sem_acesso" ? "fonte inacessível" : "✖ não encontrado na fonte";
   return `<tr><td><b>${ddmm(l.data)}</b></td><td><b>${esc(l.empresa)}</b><small>${esc(l.cidade)} · ${esc(l.segmento)}</small></td><td>${named(l) ? esc(l.nome) : "A identificar"}<small>${esc(l.cargo)}</small></td><td>${esc(l.telefone) || "—"}</td><td>${esc(l.email) || "—"}</td><td><span class="pill ${qc}">${ql}</span></td><td>${v}</td></tr>`;
 }).join("");
 const tableHtml = `<table><thead><tr><th>Data</th><th>Empresa</th><th>Contacto</th><th>Telefone</th><th>Email</th><th>Qualidade</th><th>Verificação</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;

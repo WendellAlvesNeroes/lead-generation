@@ -255,7 +255,8 @@ function chips(){
   [["nm","Com nome"],["ok","Confirmados"],["tel","Com telefone"]].forEach(function(f){c(f[1],S[f[0]],function(){S[f[0]]=!S[f[0]];chips();table()})});
 }
 function cp(t){return t?h("div",{class:"cp"},h("span",null,t),h("button",{class:"cpb",type:"button","aria-label":"Copiar "+t,onclick:function(){copy(t)}},"copiar")):h("span",{class:"v-x"},"—")}
-function ver(l){var v=l.verificacao;if(!v)return h("span",{class:"v-x"},"não verificado");if(v.estado==="confirmado")return h("span",{class:"v-c"},"✔ confirmado na fonte");if(v.estado==="sem_acesso")return h("span",{class:"v-x"},"fonte inacessível");return h("span",{class:"v-n"},"✖ não encontrado na fonte")}
+function ver(l){var v=l.verificacao;if(!v)return h("span",{class:"v-x"},"não verificado");if(v.estado==="confirmado")return h("span",{class:"v-c"},"✔ confirmado na fonte");if(v.estado==="sem_fonte")return h("span",{class:"v-x"},"sem fonte (base da equipa)");
+  if(v.estado==="sem_acesso")return h("span",{class:"v-x"},"fonte inacessível");return h("span",{class:"v-n"},"✖ não encontrado na fonte")}
 function link(u){var f=String(u||"").split(/[;\s]+/).filter(function(x){return /^https?:\/\//.test(x)})[0];return f?h("a",{href:f,target:"_blank",rel:"noopener noreferrer"},"abrir fonte"):null}
 function dayOk(l){if(!S.dia)return true;if(S.dia==="hoje")return l.data===TODAY;if(S.dia==="semana")return inWeek(l);return l.data===S.dia}
 function rows(){
